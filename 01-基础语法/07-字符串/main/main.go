@@ -1,6 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+	"strconv"
+	"strings"
+	"unicode/utf8"
+)
 
 // 字符
 /**
@@ -29,7 +35,116 @@ func createdString() {
 	fmt.Println(str1, str2)
 }
 
+// 修改字符串，虽然字符串不能被修改， 但是可以使用其它方式修改
+func modifyString() {
+	// 方式一 利用byte数组
+	str := "hello"
+	tempStr := []byte(str)
+	tempStr[0] = 'c'
+	resultStr := string(tempStr)
+	fmt.Println("resultStr:", resultStr)
+
+	// 方式二 利用切片
+	tempStr2 := str[1:]
+	resultStr2 := fmt.Sprint("s", tempStr2)
+	fmt.Println("result2", resultStr2)
+}
+
+// len
+func lenString() {
+	str := "hello"
+	str1 := "中国，"
+	fmt.Println(len(str))
+	fmt.Println(len(str1))                    // 9
+	fmt.Println(utf8.RuneCountInString(str1)) // 3 golang中字符串都以 UTF-8 保存，每个中文字符串占3个字节
+	//RuneCountInString 可获取真实长度
+}
+
+// 字符串遍历
+func ergodicString() {
+	str := "hello"
+	// 方法一
+	for i := 0; i < len(str); i++ {
+		fmt.Printf("value:%d, %c\n", i, str[i])
+	}
+	// 方法二
+	for key, value := range str {
+		fmt.Printf("key: %d, value: %c\n", key, value)
+	}
+
+	// 注意：由于上述len()函数本身原因，Unicode字符遍历需要使用range。
+}
+
+// 类型转换
+func typeTransform() {
+	num := 12
+	fmt.Println("--------")
+	fmt.Printf("%T \n", string(num))
+}
+
+// 字符串拼接
+func joinString() {
+	str1 := "hello"
+	str2 := "world"
+
+	var stringBufter bytes.Buffer
+	stringBufter.WriteString(str1)
+	stringBufter.WriteString(str2)
+	resStr := stringBufter.String()
+	fmt.Printf("%s\n", resStr)
+}
+
+func StringMethods() {
+	str := "hello world"
+	slice := []string{"whelcome", "to", "china"}
+	fmt.Println("e 的位置", strings.Index(str, "e")) //查找索引
+	fmt.Println("是否包含 e", strings.Contains(str, "e"))
+	fmt.Println("连接 e", strings.Join(slice, ","))
+	fmt.Println("替换", strings.Replace(str, "hello", "to", 1)) // 以逗号连接成字符串
+	fmt.Println("替换", strings.Split(str, " "))                // 按照空格切分成切片
+	fmt.Println("去除头部尾部指定字符串", strings.Trim(str, "h"))
+	fmt.Println("去除空格，返回切片", strings.Fields(str))
+}
+
+// strconv 转换函数 Append, Parse, Format
+func stringConv() {
+	// append 将现整数转成字符串添加到现有的字节数组中
+	str1 := make([]byte, 0, 100)
+	str1 = strconv.AppendInt(str1, 1234, 10) // base进制
+	fmt.Println(string(str1))
+	str1 = strconv.AppendBool(str1, false)
+	fmt.Println(string(str1))
+	str1 = strconv.AppendQuote(str1, "dsfsd")
+	fmt.Println(string(str1))
+	str1 = strconv.AppendQuoteRune(str1, '中')
+	fmt.Println(string(str1))
+
+	// Format将其它类型转换为字符串
+	a := strconv.FormatBool(false)
+	b := strconv.FormatFloat(123.23, 'g', 12, 64)
+	c := strconv.FormatInt(1234, 10)
+	d := strconv.FormatUint(12345, 10)
+	e := strconv.Itoa(1024)
+	fmt.Println(a, b, c, d, e)
+
+	// Parse 将字符串转换成其它类型
+	// Parse 系列函数把字符串转换为其他类型
+	f, _ := strconv.ParseBool("false")
+	g, _ := strconv.ParseFloat("123.23", 64)
+	h, _ := strconv.ParseInt("1234", 10, 64)
+	i, _ := strconv.ParseUint("12345", 10, 64)
+	j, _ := strconv.Atoi("1024")
+	fmt.Println(f, g, h, j, i, j)
+}
+
 func main() {
-	createdChar()
-	createdString()
+	//createdChar()
+	//createdString()
+	//modifyString()
+	//lenString()
+	//ergodicString()
+	//typeTransform()
+	//joinString()
+	//StringMethods()
+	stringConv()
 }
