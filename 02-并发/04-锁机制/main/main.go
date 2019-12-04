@@ -17,24 +17,31 @@ import (
 // 二 锁
 // 互斥锁保证同时只有一个 goroutine 能够访问共享资源 sync.Mutex
 
-func mutexTest() {
-	var mutex sync.Mutex
-	num := 0
-	for i := 0; i < 10; i++ {
-		go func() {
-			mutex.Lock()
-			num += 1
-			mutex.Unlock()
-		}()
-	}
-	time.Sleep(time.Second * 3)
-	fmt.Println("num = ", num)
+type Account struct {
+	money int
+	lock  *sync.Mutex
+}
+
+func (a *Account) Query() {
+	fmt.Println("当前账户金额为：", a.money)
+}
+
+func (a *Account) Add(num int) {
+	a.lock.Lock()
+	a.money += num
+	a.lock.Unlock()
 }
 
 func main() {
-
-	mutexTest()
-
-	time.Sleep(time.Second * 5)
-
+	a := &Account{
+		0,
+		&sync.Mutex{},
+	}
+	for i := 0; i < 100; i++ {
+		go func(num int) {
+			a.Add(num)
+		}(10)
+	}
+	time.Sleep(time.Second * 2)
+	a.Query()
 }
